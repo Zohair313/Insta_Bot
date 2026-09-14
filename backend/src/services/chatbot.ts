@@ -6,11 +6,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const llm = new ChatGoogleGenerativeAI({
-  modelName: 'gemini-1.5-flash',
-  apiKey: process.env.GOOGLE_API_KEY,
-  temperature: 0,
-});
+function getLLM() {
+  const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || 'placeholder-api-key';
+  return new ChatGoogleGenerativeAI({
+    model: 'gemini-1.5-flash',
+    apiKey,
+    temperature: 0,
+  });
+}
 
 const prompt = PromptTemplate.fromTemplate(`
 You are a helpful assistant. Use ONLY the provided context to answer the user request.
@@ -30,7 +33,7 @@ export async function generateChatResponse(userPrompt: string, retrievedReels: I
     return `URL: ${reel.reelUrl}\nCaption: ${reel.caption}\nTags: ${reel.tags.join(', ')}`;
   }).join('\n\n');
 
-  const chain = prompt.pipe(llm).pipe(outputParser);
+  const chain = prompt.pipe(getLLM()).pipe(outputParser);
 
   const response = await chain.invoke({
     context: contextText,

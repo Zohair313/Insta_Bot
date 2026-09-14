@@ -21,6 +21,11 @@ app.use(express.json());
 app.use('/api/reels', reelsRoutes);
 app.use('/api/chat', chatRoutes);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'Instagram AI Retriever Backend API is running. Access /health or /api/*' });
+});
+
 // Basic health check route
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Instagram AI Retriever backend is running' });

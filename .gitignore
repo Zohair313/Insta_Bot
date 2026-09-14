@@ -1,3 +1,20 @@
-﻿node_modules
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment and Secrets
 .env
-.next
+.env.*
+!.env.example
+session.json
+saved_reels.json
+
+# Builds & Cache
+.next/
+dist/
+build/
+__pycache__/
+*.pyc
+
+# Playwright & Browser sessions
+.playwright-session/
