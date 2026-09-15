@@ -11,7 +11,6 @@ try:
         ChallengeRequired,
         TwoFactorRequired,
         LoginRequired,
-        PleaseWait400,
     )
 except ImportError:
     print("Error: 'instagrapi' package is not installed.")
@@ -84,9 +83,6 @@ def login_user(username: str = None, password: str = None) -> Client:
 
         except BadPassword:
             print("[-] Incorrect password. Please check credentials and try again.")
-            exit(1)
-        except PleaseWait400:
-            print("[-] Instagram rate limit encountered (PleaseWait400). Please wait a few minutes before retrying.")
             exit(1)
         except Exception as e:
             print(f"[-] Login failed: {e}")

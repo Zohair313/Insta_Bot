@@ -2,12 +2,11 @@ import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { IReel } from '../models/Reel';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { loadSettings } from './settings';
 
 function getLLM() {
-  const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || 'placeholder-api-key';
+  const settings = loadSettings();
+  const apiKey = settings.googleApiKey || 'placeholder-api-key';
   return new ChatGoogleGenerativeAI({
     model: 'gemini-1.5-flash',
     apiKey,

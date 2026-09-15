@@ -1,50 +1,9 @@
 import { Router } from 'express';
-import fs from 'fs';
-import path from 'path';
 import { Reel } from '../models/Reel';
 import { generateChatResponse } from '../services/chatbot';
+import { readLocalReels, LocalReel } from '../services/localStore';
 
 const router = Router();
-
-interface LocalReel {
-  reelUrl: string;
-  caption: string;
-  tags: string[];
-  audio_name?: string;
-  transcript?: string;
-  createdAt?: Date;
-}
-
-/**
- * Reads local saved_reels.json file if present
- */
-function getLocalSavedReels(): LocalReel[] {
-  const possiblePaths = [
-    path.resolve(__dirname, '../../../saved_reels.json'),
-    path.resolve(__dirname, '../../saved_reels.json'),
-    path.resolve(process.cwd(), 'saved_reels.json')
-  ];
-
-  for (const p of possiblePaths) {
-    if (fs.existsSync(p)) {
-      try {
-        const raw = fs.readFileSync(p, 'utf-8');
-        const items = JSON.parse(raw);
-        return items.map((item: any) => ({
-          reelUrl: item.url || item.reelUrl || `https://www.instagram.com/reel/${item.code}/`,
-          caption: item.caption || '',
-          tags: item.tags || [],
-          audio_name: item.audio_name || '',
-          transcript: item.transcript || item.audio_name || '',
-          createdAt: new Date()
-        }));
-      } catch (e) {
-        console.error('Error reading local saved_reels.json:', e);
-      }
-    }
-  }
-  return [];
-}
 
 // POST /api/chat/query
 // Perform search and return LLM response + matching Reel URLs
@@ -65,8 +24,9 @@ router.post('/query', async (req: any, res: any) => {
           reelUrl: r.reelUrl,
           caption: r.caption || '',
           tags: r.tags || [],
+          audio_name: '',
           transcript: r.transcript || '',
-          createdAt: r.createdAt
+          createdAt: r.createdAt.toISOString(),
         }));
       }
     } catch (dbErr) {
@@ -74,7 +34,7 @@ router.post('/query', async (req: any, res: any) => {
     }
 
     // 2. Combine with local saved_reels.json if present
-    const localReels = getLocalSavedReels();
+    const localReels = readLocalReels();
     for (const lr of localReels) {
       if (!allReels.some(r => r.reelUrl === lr.reelUrl)) {
         allReels.push(lr);
@@ -83,7 +43,7 @@ router.post('/query', async (req: any, res: any) => {
 
     if (allReels.length === 0) {
       return res.json({
-        response: "No saved Instagram reels found. Please run 'python instagram_saved_search.py' to fetch your saved reels.",
+        response: "No saved Instagram reels found yet. Login to Instagram and click 'Sync Reels' (or run 'python instagram_saved_search.py') to fetch your saved reels.",
         reels: []
       });
     }

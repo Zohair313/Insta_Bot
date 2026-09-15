@@ -1017,6 +1017,130 @@ body {
   animation: slideInUp 0.3s ease;
 }
 
+/* ===== Settings ===== */
+.settings-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.settings-card-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.settings-card-header p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.settings-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.settings-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-field .required {
+  color: var(--accent-purple);
+}
+
+.settings-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 10px 12px;
+  transition: border-color 0.2s;
+}
+
+.settings-input-wrap:focus-within {
+  border-color: var(--accent-purple);
+}
+
+.settings-input-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.settings-input-wrap input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.settings-eye {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.settings-eye:hover {
+  color: var(--text-primary);
+}
+
+.saved-chip {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+  border-radius: 20px;
+  padding: 3px 9px;
+}
+
+.settings-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.settings-hint code {
+  background: var(--bg-input);
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-size: 11px;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .sidebar { width: 70px; min-width: 70px; }

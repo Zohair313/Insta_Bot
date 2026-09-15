@@ -8,7 +8,8 @@ import {
   Hash, Calendar, Search, Sparkles, ChevronLeft,
   ChevronRight, Play, Wifi, WifiOff, X, Check,
   AlertCircle, Info, Loader2, Zap, TrendingUp,
-  BookOpen, Settings, Home as HomeIcon
+  BookOpen, Settings, Home as HomeIcon,
+  KeyRound, Database, Lock, UserRound, Eye, EyeOff
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -36,7 +37,7 @@ interface Toast {
   message: string;
 }
 
-type ActiveView = 'chat' | 'reels' | 'stats';
+type ActiveView = 'chat' | 'reels' | 'stats' | 'settings';
 
 const API_BASE = 'http://localhost:3001/api';
 
@@ -286,6 +287,75 @@ export default function Home() {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
+  // ── Settings ───────────────────────────────────────────────────────────────
+  const [settings, setSettings] = useState<Record<string, string>>({
+    openaiApiKey: '',
+    googleApiKey: '',
+    mongodbUri: '',
+    instagramUsername: '',
+    instagramPassword: '',
+  });
+  const [settingsMeta, setSettingsMeta] = useState<Record<string, boolean>>({});
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsSaving, setSettingsSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const loadSettings = useCallback(async () => {
+    setSettingsLoading(true);
+    try {
+      const res = await axios.get(`${API_BASE}/settings`);
+      const meta = res.data;
+      setSettingsMeta({
+        openaiApiKey: !!meta.openaiApiKeySet,
+        googleApiKey: !!meta.googleApiKeySet,
+        mongodbUri: !!meta.mongodbUriSet,
+        instagramUsername: !!meta.instagramUsername,
+        instagramPassword: !!meta.instagramPasswordSet,
+      });
+      setSettings(prev => ({
+        ...prev,
+        instagramUsername: meta.instagramUsername || '',
+      }));
+    } catch {
+      addToast('error', 'Failed to load settings');
+    } finally {
+      setSettingsLoading(false);
+    }
+  }, [addToast]);
+
+  const handleSaveSettings = async () => {
+    setSettingsSaving(true);
+    try {
+      const res = await axios.post(`${API_BASE}/settings`, {
+        openaiApiKey: settings.openaiApiKey || undefined,
+        googleApiKey: settings.googleApiKey || undefined,
+        mongodbUri: settings.mongodbUri || undefined,
+        instagramUsername: settings.instagramUsername || undefined,
+        instagramPassword: settings.instagramPassword || undefined,
+      });
+      const meta = res.data;
+      setSettingsMeta({
+        openaiApiKey: !!meta.openaiApiKeySet,
+        googleApiKey: !!meta.googleApiKeySet,
+        mongodbUri: !!meta.mongodbUriSet,
+        instagramUsername: !!meta.instagramUsername,
+        instagramPassword: !!meta.instagramPasswordSet,
+      });
+      setSettings(prev => ({
+        ...prev,
+        openaiApiKey: '',
+        googleApiKey: '',
+        mongodbUri: '',
+        instagramPassword: '',
+      }));
+      addToast('success', 'Settings saved! Restart backend to apply MongoDB/embedding changes.');
+    } catch {
+      addToast('error', 'Failed to save settings');
+    } finally {
+      setSettingsSaving(false);
+    }
+  };
+
   // ── Textarea auto-resize ───────────────────────────────────────────────────
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
@@ -416,6 +486,7 @@ export default function Home() {
     { id: 'chat' as ActiveView, icon: <MessageSquare size={18} />, label: 'AI Chat' },
     { id: 'reels' as ActiveView, icon: <Film size={18} />, label: 'Saved Reels', badge: reels.length > 0 ? reels.length : undefined },
     { id: 'stats' as ActiveView, icon: <BarChart3 size={18} />, label: 'Analytics' },
+    { id: 'settings' as ActiveView, icon: <Settings size={18} />, label: 'Settings' },
   ];
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -446,7 +517,10 @@ export default function Home() {
             <button
               key={item.id}
               className={`nav-item ${activeView === item.id ? 'active' : ''}`}
-              onClick={() => setActiveView(item.id)}
+              onClick={() => {
+                setActiveView(item.id);
+                if (item.id === 'settings') loadSettings();
+              }}
               title={sidebarCollapsed ? item.label : undefined}
             >
               <span className="nav-item-icon">{item.icon}</span>
@@ -523,11 +597,13 @@ export default function Home() {
               {activeView === 'chat' && '✨ AI Assistant'}
               {activeView === 'reels' && '🎬 Saved Reels'}
               {activeView === 'stats' && '📊 Analytics'}
+              {activeView === 'settings' && '⚙️ Settings'}
             </h2>
             <p>
               {activeView === 'chat' && 'Ask anything about your saved Instagram reels'}
               {activeView === 'reels' && `${reels.length} reels indexed and searchable`}
               {activeView === 'stats' && 'Insights about your reel collection'}
+              {activeView === 'settings' && 'Configure API keys and your Instagram account'}
             </p>
           </div>
 
@@ -760,6 +836,152 @@ export default function Home() {
                 <h3>No Data Yet</h3>
                 <p>Sync your reels to see analytics and insights here.</p>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            ── SETTINGS VIEW ─────────────────────────────────────────────
+        ════════════════════════════════════════════════════════════════════ */}
+        {activeView === 'settings' && (
+          <div className="reels-view settings-view">
+            {settingsLoading ? (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
+                <Loader2 size={28} style={{ animation: 'spin-slow 1s linear infinite', color: 'var(--accent-purple)' }} />
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+
+                  {/* API Keys */}
+                  <div className="settings-card">
+                    <div className="settings-card-header">
+                      <div className="settings-card-icon" style={{ background: 'var(--gradient-brand)' }}>
+                        <KeyRound size={18} color="white" />
+                      </div>
+                      <div>
+                        <h3>API Keys</h3>
+                        <p>Enables the AI chatbot, embeddings & database</p>
+                      </div>
+                    </div>
+
+                    <div className="settings-field">
+                      <label>Google Gemini API Key <span className="required">*</span></label>
+                      <div className="settings-input-wrap">
+                        <KeyRound size={15} className="settings-input-icon" />
+                        <input
+                          type="password"
+                          placeholder={settingsMeta.googleApiKey ? '••••••••  (saved)' : 'AIzaSy...'}
+                          value={settings.googleApiKey}
+                          onChange={e => setSettings(p => ({ ...p, googleApiKey: e.target.value }))}
+                        />
+                        {settingsMeta.googleApiKey && <span className="saved-chip">Saved</span>}
+                      </div>
+                      <p className="settings-hint">Used by the chatbot to generate AI answers.</p>
+                    </div>
+
+                    <div className="settings-field">
+                      <label>OpenAI API Key</label>
+                      <div className="settings-input-wrap">
+                        <KeyRound size={15} className="settings-input-icon" />
+                        <input
+                          type="password"
+                          placeholder={settingsMeta.openaiApiKey ? '••••••••  (saved)' : 'sk-proj-...'}
+                          value={settings.openaiApiKey}
+                          onChange={e => setSettings(p => ({ ...p, openaiApiKey: e.target.value }))}
+                        />
+                        {settingsMeta.openaiApiKey && <span className="saved-chip">Saved</span>}
+                      </div>
+                      <p className="settings-hint">Used to embed reel captions for semantic search.</p>
+                    </div>
+
+                    <div className="settings-field">
+                      <label>MongoDB URI</label>
+                      <div className="settings-input-wrap">
+                        <Database size={15} className="settings-input-icon" />
+                        <input
+                          type="password"
+                          placeholder={settingsMeta.mongodbUri ? '••••••••  (saved)' : 'mongodb+srv://...'}
+                          value={settings.mongodbUri}
+                          onChange={e => setSettings(p => ({ ...p, mongodbUri: e.target.value }))}
+                        />
+                        {settingsMeta.mongodbUri && <span className="saved-chip">Saved</span>}
+                      </div>
+                      <p className="settings-hint">Optional — stores reels in a database.</p>
+                    </div>
+                  </div>
+
+                  {/* Instagram Account */}
+                  <div className="settings-card">
+                    <div className="settings-card-header">
+                      <div className="settings-card-icon" style={{ background: 'linear-gradient(135deg, #f09433, #dc2743)' }}>
+                        <UserRound size={18} color="white" />
+                      </div>
+                      <div>
+                        <h3>Instagram Account</h3>
+                        <p>Auto-login to fetch your saved reels</p>
+                      </div>
+                    </div>
+
+                    <div className="settings-field">
+                      <label>Instagram Username</label>
+                      <div className="settings-input-wrap">
+                        <UserRound size={15} className="settings-input-icon" />
+                        <input
+                          placeholder={settingsMeta.instagramUsername ? settings.instagramUsername : 'username'}
+                          value={settings.instagramUsername}
+                          onChange={e => setSettings(p => ({ ...p, instagramUsername: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="settings-field">
+                      <label>Instagram Password</label>
+                      <div className="settings-input-wrap">
+                        <Lock size={15} className="settings-input-icon" />
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder={settingsMeta.instagramPassword ? '••••••••  (saved)' : 'password'}
+                          value={settings.instagramPassword}
+                          onChange={e => setSettings(p => ({ ...p, instagramPassword: e.target.value }))}
+                        />
+                        <button
+                          className="settings-eye"
+                          type="button"
+                          onClick={() => setShowPassword(v => !v)}
+                          title={showPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                        </button>
+                      </div>
+                      <p className="settings-hint">
+                        Stored securely on your server and used only for logging into Instagram.
+                      </p>
+                    </div>
+
+                    <div style={{ padding: '12px 14px', background: 'rgba(131,58,180,0.06)', borderRadius: '10px', border: '1px solid rgba(131,58,180,0.1)' }}>
+                      <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                        ⚠️ After saving, click <b>Login to Instagram</b> in the sidebar. A browser opens and logs in automatically.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button className="btn btn-primary" onClick={handleSaveSettings} disabled={settingsSaving}>
+                    {settingsSaving ? <Loader2 size={15} style={{ animation: 'spin-slow 1s linear infinite' }} /> : <Check size={15} />}
+                    {settingsSaving ? 'Saving...' : 'Save Settings'}
+                  </button>
+                  <button className="btn btn-secondary" onClick={loadSettings} disabled={settingsLoading}>
+                    <RefreshCw size={15} /> Reload
+                  </button>
+                </div>
+
+                <p className="settings-hint" style={{ marginTop: '12px', fontSize: '12px' }}>
+                  Keys are stored in <code>backend/settings.json</code> on your machine (never in the browser).
+                  Restart the backend after saving MongoDB or OpenAI keys.
+                </p>
+              </>
             )}
           </div>
         )}
