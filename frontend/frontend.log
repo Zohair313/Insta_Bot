@@ -1,0 +1,58 @@
+
+> frontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.3.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.101:3000
+✓ Ready in 7.3s
+✓ Running next.config.ts took 500ms
+
+ GET / 200 in 3.8s (next.js: 3.4s, application-code: 383ms)
+ GET / 200 in 106ms (next.js: 24ms, application-code: 82ms)
+✓ Compiled in 556ms
+ GET / 200 in 110ms (next.js: 43ms, application-code: 67ms)
+✓ Compiled in 301ms
+ GET / 200 in 175ms (next.js: 28ms, application-code: 147ms)
+✓ Compiled in 432ms
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⨯ ReferenceError: Cannot access 'addToast' before initialization
+    at Home (src\app\page.tsx:295:7)
+  293 |       setSettingsLoading(false);
+  294 |     }
+> 295 |   }, [addToast]);
+      |       ^
+  296 |
+  297 |   const handleSaveSettings = async () => {
+  298 |     setSettingsSaving(true); {
+  digest: '2677432563'
+}
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 5ms
+ GET / 500 in 1014ms (next.js: 28ms, application-code: 986ms)
+⨯ ReferenceError: Cannot access 'addToast' before initialization
+    at Home (src\app\page.tsx:295:7)
+  293 |       setSettingsLoading(false);
+  294 |     }
+> 295 |   }, [addToast]);
+      |       ^
+  296 |
+  297 |   const handleSaveSettings = async () => {
+  298 |     setSettingsSaving(true); {
+  digest: '281049337'
+}
+ GET / 500 in 296ms (next.js: 45ms, application-code: 250ms)
+ GET / 200 in 191ms (next.js: 20ms, application-code: 171ms)
+✓ Compiled in 95ms
+ GET / 200 in 72ms (next.js: 27ms, application-code: 45ms)
+✓ Compiled in 59ms
+ GET / 200 in 54ms (next.js: 24ms, application-code: 30ms)
+✓ Compiled in 114ms
+ GET / 200 in 44ms (next.js: 13ms, application-code: 31ms)
+ GET / 200 in 162ms (next.js: 10ms, application-code: 152ms)
+ GET / 200 in 82ms (next.js: 14ms, application-code: 68ms)
+ GET / 200 in 60ms (next.js: 7ms, application-code: 52ms)
+ GET / 200 in 224ms (next.js: 117ms, application-code: 107ms)
+ GET / 200 in 94ms (next.js: 22ms, application-code: 72ms)
+ GET / 200 in 233ms (next.js: 120ms, application-code: 113ms)
+ GET / 200 in 360ms (next.js: 186ms, application-code: 174ms)

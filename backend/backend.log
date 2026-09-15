@@ -1,0 +1,60 @@
+◇ injected env (4) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+MongoDB not connected (no valid MONGODB_URI in settings/.env). DB-backed features will use fallbacks.
+Server is running on port 3001
+Navigating to https://www.instagram.com/syed.__.alii_/saved/all-posts/
+Found 25 saved post/reel URLs. Extracting captions...
+Saved 25 reels to saved_reels.json
+MongoDB search fallback (DB empty or not connected)
+LLM response fallback: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [400 ] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+    at handleResponseNotOk (D:\insta bot\Insta_Bot\backend\node_modules\@google\generative-ai\dist\index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async makeRequest (D:\insta bot\Insta_Bot\backend\node_modules\@google\generative-ai\dist\index.js:403:9)
+    at async generateContent (D:\insta bot\Insta_Bot\backend\node_modules\@google\generative-ai\dist\index.js:867:22)
+    at async <anonymous> (D:\insta bot\Insta_Bot\backend\node_modules\@langchain\google-genai\src\chat_models.ts:1078:18)
+    at async Object.pRetry (D:\insta bot\Insta_Bot\backend\node_modules\@langchain\core\src\utils\p-retry\index.js:246:22)
+    at async run (D:\insta bot\Insta_Bot\backend\node_modules\p-queue\dist\index.js:163:29) {
+  status: 400,
+  statusText: '',
+  errorDetails: [
+    {
+      '@type': 'type.googleapis.com/google.rpc.ErrorInfo',
+      reason: 'API_KEY_INVALID',
+      domain: 'googleapis.com',
+      metadata: [Object]
+    },
+    {
+      '@type': 'type.googleapis.com/google.rpc.LocalizedMessage',
+      locale: 'en-US',
+      message: 'API key not valid. Please pass a valid API key.'
+    }
+  ]
+}
+Navigating to https://www.instagram.com/syed.__.alii_/saved/all-posts/
+Found 25 saved post/reel URLs. Extracting captions...
+MongoDB search fallback (DB empty or not connected)
+LLM response fallback: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [400 ] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+    at handleResponseNotOk (D:\insta bot\Insta_Bot\backend\node_modules\@google\generative-ai\dist\index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async makeRequest (D:\insta bot\Insta_Bot\backend\node_modules\@google\generative-ai\dist\index.js:403:9)
+    at async generateContent (D:\insta bot\Insta_Bot\backend\node_modules\@google\generative-ai\dist\index.js:867:22)
+    at async <anonymous> (D:\insta bot\Insta_Bot\backend\node_modules\@langchain\google-genai\src\chat_models.ts:1078:18)
+    at async Object.pRetry (D:\insta bot\Insta_Bot\backend\node_modules\@langchain\core\src\utils\p-retry\index.js:246:22)
+    at async run (D:\insta bot\Insta_Bot\backend\node_modules\p-queue\dist\index.js:163:29) {
+  status: 400,
+  statusText: '',
+  errorDetails: [
+    {
+      '@type': 'type.googleapis.com/google.rpc.ErrorInfo',
+      reason: 'API_KEY_INVALID',
+      domain: 'googleapis.com',
+      metadata: [Object]
+    },
+    {
+      '@type': 'type.googleapis.com/google.rpc.LocalizedMessage',
+      locale: 'en-US',
+      message: 'API key not valid. Please pass a valid API key.'
+    }
+  ]
+}
+Saved 25 reels to saved_reels.json
